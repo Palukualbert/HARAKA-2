@@ -18,6 +18,8 @@ Route::delete('/chauffeur/{id}/delete', [App\Http\Controllers\ChauffeurControlle
 
 Route::get('/liste', [\App\Http\Controllers\ChauffeurController::class,'liste'])->name('chauffeur.liste');
 
+Route::get('/payer',[\App\Http\Controllers\PaiementController::class, 'paiement'])->name('client.payer');
+Route::post('/valider',[\App\Http\Controllers\PaiementController::class, 'submit'])->name('client.submit');
 Route::get('/paiement', function () {
     return view('layouts.paiement');
 });

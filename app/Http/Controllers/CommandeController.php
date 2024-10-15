@@ -26,7 +26,16 @@ class CommandeController extends Controller
         // Traiter les données ici, par exemple, en les sauvegardant dans la base de données
 
         // Rediriger vers une page de confirmation ou afficher un message de succès
-        event(new CommandeEvent('Gopher'));
+
+        $data['start'] = $request->start;
+        $data['end'] = $request->end;
+        $data['startCoords'] = $request->startCoords;
+        $data['endCoords'] = $request->endCoords;
+        $data['distance'] = $request->distance;
+        $data['duration'] = $request->duration;
+        $data['price'] = $request->price;
+
+        event(new CommandeEvent(json_encode($data)));
         return view('layouts.CommandePassee');
     }
 }

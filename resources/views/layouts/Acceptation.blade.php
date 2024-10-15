@@ -154,134 +154,87 @@
 
 
 
-    setTimeout(()=>{
+    setTimeout(() => {
         window.Echo.channel('commandeChannel')
-            .listen('CommandeEvent',(e)=>{
-                function createOrderInfo(startAddress, endAddress, orderPrice) {
-                    // Créer la div principale
+            .listen('CommandeEvent', (e) => {
+                // Afficher l'objet e pour voir la structure complète
+                console.log('Données reçues de l\'événement :', e);
+
+                // Accéder aux données dans la clé message et parser le JSON
+                const orderDetails = JSON.parse(e.message); // Convertir la chaîne JSON en objet
+
+                // Vérifier si les données sont récupérées correctement
+                console.log('Start:', orderDetails.start);
+                console.log('End:', orderDetails.end);
+                console.log('Distance:', orderDetails.distance);
+                console.log('Duration:', orderDetails.duration);
+                console.log('Price:', orderDetails.price);
+
+                // Utiliser ces données pour créer l'interface
+                function createOrderInfo(startAddress, endAddress, distance, duration, price) {
                     const orderInfoDiv = document.createElement('div');
                     orderInfoDiv.className = 'order-info';
 
-                    // Créer le titre
                     const title = document.createElement('h4');
                     title.innerText = 'Nouvelle Commande';
                     orderInfoDiv.appendChild(title);
 
-                    // Créer le point de départ
                     const startPoint = document.createElement('p');
                     startPoint.innerHTML = `<strong>Point de départ :</strong> <span id="startAddress">${startAddress}</span>`;
                     orderInfoDiv.appendChild(startPoint);
 
-                    // Créer la destination
                     const endPoint = document.createElement('p');
                     endPoint.innerHTML = `<strong>Destination :</strong> <span id="endAddress">${endAddress}</span>`;
                     orderInfoDiv.appendChild(endPoint);
 
-                    // Créer le prix
-                    const price = document.createElement('p');
-                    price.innerHTML = `<strong>Prix :</strong> <span id="orderPrice">${orderPrice} FC</span>`;
-                    orderInfoDiv.appendChild(price);
+                    const distanceElement = document.createElement('p');
+                    distanceElement.innerHTML = `<strong>Distance :</strong> <span id="distance">${distance} km</span>`;
+                    orderInfoDiv.appendChild(distanceElement);
 
-                    // Créer le bouton "Accepter la commande"
+                    const durationElement = document.createElement('p');
+                    durationElement.innerHTML = `<strong>Durée :</strong> <span id="duration">${duration} minutes</span>`;
+                    orderInfoDiv.appendChild(durationElement);
+
+                    const priceElement = document.createElement('p');
+                    priceElement.innerHTML = `<strong>Prix :</strong> <span id="orderPrice">${price} FC</span>`;
+                    orderInfoDiv.appendChild(priceElement);
+
                     const acceptButton = document.createElement('button');
                     acceptButton.id = 'acceptButton';
                     acceptButton.innerText = 'Accepter la commande';
-                    acceptButton.addEventListener('click', function() {
+                    acceptButton.addEventListener('click', function () {
                         alert(`Commande acceptée. Dirigez-vous vers ${startAddress} pour prendre le client.`);
-                        // Ajoutez ici l'appel API pour informer le serveur de l'acceptation
                     });
                     orderInfoDiv.appendChild(acceptButton);
 
-                    // Créer le bouton "Annuler la commande"
                     const cancelButton = document.createElement('button');
                     cancelButton.id = 'cancelButton';
                     cancelButton.className = 'btn-danger';
                     cancelButton.innerText = 'Annuler la commande';
                     cancelButton.style.marginTop = '10px';
-                    cancelButton.addEventListener('click', function() {
+                    cancelButton.addEventListener('click', function () {
                         const reason = prompt('Veuillez indiquer le motif de l\'annulation:');
                         if (reason) {
                             alert(`Commande annulée. Raison: ${reason}`);
-                            // Ajoutez ici l'appel API pour informer le serveur de l'annulation
                         }
                     });
                     orderInfoDiv.appendChild(cancelButton);
 
-                    // Ajouter le bloc de commande à l'élément de conteneur
                     document.getElementById('orderContainer').appendChild(orderInfoDiv);
                 }
 
-                // Exemple d'utilisation de la fonction pour créer une commande
-                createOrderInfo('Avenue des Acacias', 'Avenue de l\'Université', 7500);
+                // Appeler la fonction pour afficher les informations de commande
+                createOrderInfo(
+                    orderDetails.start,     // Point de départ
+                    orderDetails.end,       // Destination
+                    orderDetails.distance,  // Distance
+                    orderDetails.duration,  // Durée
+                    orderDetails.price      // Prix
+                );
+            });
+    }, 200);
 
 
-                const map = L.map('map').setView([-11.6647, 27.4794], 13);
-                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    maxZoom: 19,
-                    attribution: '© OpenStreetMap'
-                }).addTo(map);
-
-                // Simuler la réception d'une commande pour le chauffeur
-                let orderDetails = {
-                    start: 'Avenue des Acacias',
-                    end: 'Avenue de l\'Université',
-                    price: 7500,
-                    startCoords: [-11.6627, 27.4824],
-                    endCoords: [-11.6790, 27.4720]
-                };
-
-                // Afficher les détails de la commande
-                document.getElementById('startAddress').innerText = orderDetails.start;
-                document.getElementById('endAddress').innerText = orderDetails.end;
-                document.getElementById('orderPrice').innerText = orderDetails.price.toFixed(2);
-
-                // Afficher l'itinéraire sur la carte
-                showRoute(orderDetails.startCoords, orderDetails.endCoords, orderDetails.start, orderDetails.end);
-
-                function showRoute(startCoords, endCoords, startAddress, endAddress) {
-                    if (window.routeControl) {
-                        map.removeControl(window.routeControl);
-                        window.routeControl = null;
-                    }
-
-                    const startMarker = L.marker(startCoords).addTo(map)
-                        .bindPopup('Point de départ: ' + startAddress)
-                        .openPopup();
-
-                    const endMarker = L.marker(endCoords).addTo(map)
-                        .bindPopup('Destination: ' + endAddress);
-
-                    window.routeControl = L.Routing.control({
-                        waypoints: [
-                            L.latLng(startCoords[0], startCoords[1]),
-                            L.latLng(endCoords[0], endCoords[1])
-                        ],
-                        routeWhileDragging: true,
-                        router: L.routing.osrmv1({
-                            serviceUrl: 'https://router.project-osrm.org/route/v1'
-                        }),
-                        createMarker: function() { return null; }
-                    }).addTo(map);
-                }
-
-                // Gestion du clic sur le bouton "Accepter la commande"
-                document.getElementById('acceptButton').addEventListener('click', function () {
-                    alert('Commande acceptée. Dirigez-vous vers ' + orderDetails.start + ' pour prendre le client.');
-                    // Implémenter l'appel API pour informer le serveur de l'acceptation
-                });
-
-                // Gestion du clic sur le bouton "Annuler la commande"
-                document.getElementById('cancelButton').addEventListener('click', function () {
-                    const reason = prompt('Veuillez indiquer le motif de l\'annulation:');
-                    if (reason) {
-                        alert('Commande annulée. Raison: ' + reason);
-                        // Implémenter l'appel API pour informer le serveur de l'annulation
-                    }
-                });
-
-                console.log('Hi there !')
-            })
-    },200)
 
 
 </script>
