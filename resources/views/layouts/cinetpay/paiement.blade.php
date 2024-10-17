@@ -82,18 +82,19 @@
 <div class="container d-flex justify-content-center">
     <div class="card">
         <p class="heading">PAIEMENT MOBILE MONEY</p>
-        <form action="{{ route('client.submit') }}" method="post" class="card-details">
+        <form action="" method="POST" class="card-details">
+            @csrf
             <div class="row mb-4">
                 <div class="col-md-6">
                     <div class="form-group">
                         <p class="text-dark">Nom</p>
-                        <input type="text" class="form-control" name="customer_name" id="customer_name">
+                        <input type="text" class="form-control" name="customer_name" id="customer_name" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <p class="text-dark">Prénom</p>
-                        <input type="text" class="form-control" name="customer_surname" id="customer_surname">
+                        <input type="text" class="form-control" name="customer_surname" id="customer_surname" required>
                     </div>
                 </div>
             </div>
@@ -102,13 +103,13 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <p class="text-dark">Montant</p>
-                        <input type="number" class="form-control" name="amount" id="amount">
+                        <input type="number" class="form-control" name="amount" id="amount" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <p class="text-dark">Devise</p>
-                        <select class="form-select" name="currency" id="currency">
+                        <select class="form-select" name="currency" id="currency" required>
                             <option value="CDF">CDF</option>
                             <option value="XOF">XOF</option>
                             <option value="XAF">XAF</option>
@@ -123,7 +124,7 @@
                 <div class="col-12">
                     <div class="form-group">
                         <p class="text-dark">Description</p>
-                        <input type="text" class="form-control" name="description">
+                        <input type="text" class="form-control" name="description" required>
                     </div>
                 </div>
             </div>
