@@ -16,6 +16,7 @@ Route::put('/chauffeur/{id}', [\App\Http\Controllers\ChauffeurController::class,
 
 Route::delete('/chauffeur/{id}/delete', [App\Http\Controllers\ChauffeurController::class, 'destroy'])->name('chauffeur.delete');
 
+Route::get('/chauffeur/{id}/rapport/pdf', [\App\Http\Controllers\ChauffeurController::class, 'generatePdf'])->name('chauffeur.rapport.pdf');
 Route::get('/liste', [\App\Http\Controllers\ChauffeurController::class,'liste'])->name('chauffeur.liste');
 
 Route::get('/payer',[\App\Http\Controllers\PaiementController::class, 'paiement'])->name('client.payer');

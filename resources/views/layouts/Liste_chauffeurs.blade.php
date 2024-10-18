@@ -196,6 +196,10 @@
                                     @method('DELETE')
                                     <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce chauffeur ?');">Supprimer</button>
                                 </form>
+                                <!-- Bouton Générer PDF -->
+                                <a href="{{ route('chauffeur.rapport.pdf', $chauffeur->id) }}" class="btn btn-info btn-sm" target="_blank">
+                                    <i class="fa fa-file-pdf-o"></i> PDF
+                                </a>
                             </td>
 
                         @endforeach

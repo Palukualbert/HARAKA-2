@@ -157,7 +157,7 @@ class PaiementController extends Controller
             }
             else
             {
-                /* correct, on redirige le client vers la page souhaité */
+                /* incorrect, on redirige le client vers la page souhaité */
                 return back()->with('info', 'Echec, votre paiement a échoué');
             }
         }

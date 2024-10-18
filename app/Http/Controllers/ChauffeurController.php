@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
+// Import du package DOMPDF
+use PDF;
 class ChauffeurController extends Controller
 {
 
@@ -94,4 +96,31 @@ class ChauffeurController extends Controller
     function accepter(){
         return view('layouts.Acceptation');
     }
+
+    // Méthode pour générer un rapport PDF
+    public function generatePdf($id)
+    {
+        // Récupérer le chauffeur avec ses véhicules
+        $chauffeur = Chauffeur::with('vehicules')->findOrFail($id);
+
+        // Générer le PDF en passant les données du chauffeur
+        $pdf = PDF::loadView('rapports.chauffeur_pdf', compact('chauffeur'));
+
+        // Télécharger le fichier PDF
+        return $pdf->download('rapport_chauffeur_' . $chauffeur->nom . '.pdf');
+
+        //$pdf->stream "à utiliser si on souhaite ouvrir le fichier automatiquement dans un autre onglet"
+        //return $pdf->stream('rapport_chauffeur_' . $chauffeur->nom . '.pdf');
+
+    }
+
+    // Méthode pour générer un rapport Excel
+    /* public function generateExcel($id)
+     {
+         // Récupérer le chauffeur par ID
+         $chauffeur = Chauffeur::findOrFail($id);
+
+         // Générer le fichier Excel
+         return Excel::download(new ChauffeurExport($chauffeur), 'rapport_chauffeur_' . $chauffeur->nom . '.xlsx');
+     }*/
 }
