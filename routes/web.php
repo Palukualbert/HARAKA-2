@@ -19,7 +19,7 @@ Route::delete('/chauffeur/{id}/delete', [App\Http\Controllers\ChauffeurControlle
 Route::get('/liste', [\App\Http\Controllers\ChauffeurController::class,'liste'])->name('chauffeur.liste');
 
 Route::get('/payer',[\App\Http\Controllers\PaiementController::class, 'paiement'])->name('client.payer');
-Route::post('/payer', [\App\Http\Controllers\PaiementController::class, 'Payment']);
+Route::post('/payment', [\App\Http\Controllers\PaiementController::class, 'Payment'])->name('payment');
 Route::match(['get','post'],'/notify_url', [\App\Http\Controllers\PaiementController::class, 'notify_url'])->name('notify_url');
 Route::match(['get','post'],'/return_url', [\App\Http\Controllers\PaiementController::class, 'return_url'])->name('return_url');
 

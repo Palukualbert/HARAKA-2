@@ -17,25 +17,26 @@ class PaiementController extends Controller
     {
         $transaction_id = date("YmdHis");// Generer votre identifiant de transaction
         $cinetpay_data =  [
-            "amount"=> $request['amount'],
-            "currency"=> $request['currency'],
-            "apikey"=> env("APIKEY"),
-            "site_id"=> env("SITE_ID"),
-            "transaction_id"=> "sdkLaravel-".$transaction_id,
-            "description"=> "TEST-Laravel",
-            "return_url"=> route('return_url'),
-            "notify_url"=> route('notify_url'),
-            "metadata"=> "user001",
-            'customer_surname'=> "",
-            'customer_name'=> "" ,
-            'customer_email'=> "",
-            'customer_phone_number'=> '',
-            'customer_address'=> '',
-            'customer_city'=> '',
-            'customer_country'=> '' ,
-            'customer_state'=> '',
-            'customer_zip_code'=> ''
+            "amount" => $request['amount'],
+            "currency" => $request['currency'],
+            "apikey" => env("APIKEY"),
+            "site_id" => env("SITE_ID"),
+            "transaction_id" => "sdkLaravel-" . $transaction_id,
+            "description" => $request['description'],
+            "return_url" => route('return_url'),
+            "notify_url" => route('notify_url'),
+            "metadata" => "user001",
+            'customer_surname' => $request['customer_surname'],
+            'customer_name' => $request['customer_name'],
+            'customer_email' => "", // Vous pouvez ajouter un champ email dans le formulaire
+            'customer_phone_number' => "", // Ajouter un champ pour le numéro de téléphone si nécessaire
+            'customer_address' => '',
+            'customer_city' => '',
+            'customer_country' => '',
+            'customer_state' => '',
+            'customer_zip_code' => ''
         ];
+
         //Sequence d'initialisation du lien de paiement
         $curl = curl_init();
 

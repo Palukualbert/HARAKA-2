@@ -82,7 +82,7 @@
 <div class="container d-flex justify-content-center">
     <div class="card">
         <p class="heading">PAIEMENT MOBILE MONEY</p>
-        <form action="" method="POST" class="card-details">
+        <form action="{{ route('payment') }}" method="POST" class="card-details">
             @csrf
             <div class="row mb-4">
                 <div class="col-md-6">
