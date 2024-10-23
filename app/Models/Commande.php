@@ -8,4 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class Commande extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'date',
+        'statut',
+        'pointDepart',
+        'destination',
+        'coutEstime',
+        'longitudeDepart',
+        'latitudeDepart',
+        'latitudeDest',
+        'longitudeDest',
+        'client_id',
+        'vehicule_id',
+    ];
 }

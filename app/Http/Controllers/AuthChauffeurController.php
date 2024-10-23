@@ -22,9 +22,9 @@ class AuthChauffeurController extends Controller
         ];
 
         if (Auth::guard('chauffeur')->attempt($credentials)) {
-            return redirect()->intended('/liste');
+            return redirect()->intended(route('chauffeur.accepter'));
         } else {
-
+            echo "hum";
         }
     }
 

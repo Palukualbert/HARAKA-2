@@ -44,7 +44,6 @@
             box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
         }
 
-        /* Map and Controls Styles */
         #map {
             height: 400px;
             margin-bottom: 20px;
@@ -89,14 +88,6 @@
             background-color: #0056b3;
         }
 
-        .order-info .btn-danger {
-            background-color: #dc3545;
-        }
-
-        .order-info .btn-danger:hover {
-            background-color: #c82333;
-        }
-
         /* Responsive Styles */
         @media (max-width: 768px) {
             #map {
@@ -123,17 +114,13 @@
 @include('partials.header')
 
 <section style="margin: 40px auto; width: 90%; max-width: 1200px;">
-    <!-- Map -->
     <div id="map"></div>
-
-    <!-- Order Information -->
     <div id="orderContainer"></div>
-
 </section>
-    @vite('resources/js/app.js')
-    @include('partials.footer')
 
-<!-- JavaScript and Libraries -->
+@vite('resources/js/app.js')
+@include('partials.footer')
+
 <script src="{{ asset('js/vendor/jquery-2.2.4.min.js') }}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous"></script>
 <script src="{{ asset('js/vendor/bootstrap.min.js') }}"></script>
@@ -151,92 +138,61 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js"></script>
 
 <script>
-
-
-
     setTimeout(() => {
         window.Echo.channel('commandeChannel')
             .listen('CommandeEvent', (e) => {
-                // Afficher l'objet e pour voir la structure complète
-                console.log('Données reçues de l\'événement :', e);
-
-                // Accéder aux données dans la clé message et parser le JSON
-                const orderDetails = JSON.parse(e.message); // Convertir la chaîne JSON en objet
-
-                // Vérifier si les données sont récupérées correctement
-                console.log('Start:', orderDetails.start);
-                console.log('End:', orderDetails.end);
-                console.log('Distance:', orderDetails.distance);
-                console.log('Duration:', orderDetails.duration);
-                console.log('Price:', orderDetails.price);
-
-                // Utiliser ces données pour créer l'interface
-                function createOrderInfo(startAddress, endAddress, distance, duration, price) {
-                    const orderInfoDiv = document.createElement('div');
-                    orderInfoDiv.className = 'order-info';
-
-                    const title = document.createElement('h4');
-                    title.innerText = 'Nouvelle Commande';
-                    orderInfoDiv.appendChild(title);
-
-                    const startPoint = document.createElement('p');
-                    startPoint.innerHTML = `<strong>Point de départ :</strong> <span id="startAddress">${startAddress}</span>`;
-                    orderInfoDiv.appendChild(startPoint);
-
-                    const endPoint = document.createElement('p');
-                    endPoint.innerHTML = `<strong>Destination :</strong> <span id="endAddress">${endAddress}</span>`;
-                    orderInfoDiv.appendChild(endPoint);
-
-                    const distanceElement = document.createElement('p');
-                    distanceElement.innerHTML = `<strong>Distance :</strong> <span id="distance">${distance} km</span>`;
-                    orderInfoDiv.appendChild(distanceElement);
-
-                    const durationElement = document.createElement('p');
-                    durationElement.innerHTML = `<strong>Durée :</strong> <span id="duration">${duration} minutes</span>`;
-                    orderInfoDiv.appendChild(durationElement);
-
-                    const priceElement = document.createElement('p');
-                    priceElement.innerHTML = `<strong>Prix :</strong> <span id="orderPrice">${price} FC</span>`;
-                    orderInfoDiv.appendChild(priceElement);
-
-                    const acceptButton = document.createElement('button');
-                    acceptButton.id = 'acceptButton';
-                    acceptButton.innerText = 'Accepter la commande';
-                    acceptButton.addEventListener('click', function () {
-                        alert(`Commande acceptée. Dirigez-vous vers ${startAddress} pour prendre le client.`);
-                    });
-                    orderInfoDiv.appendChild(acceptButton);
-
-                    const cancelButton = document.createElement('button');
-                    cancelButton.id = 'cancelButton';
-                    cancelButton.className = 'btn-danger';
-                    cancelButton.innerText = 'Annuler la commande';
-                    cancelButton.style.marginTop = '10px';
-                    cancelButton.addEventListener('click', function () {
-                        const reason = prompt('Veuillez indiquer le motif de l\'annulation:');
-                        if (reason) {
-                            alert(`Commande annulée. Raison: ${reason}`);
-                        }
-                    });
-                    orderInfoDiv.appendChild(cancelButton);
-
-                    document.getElementById('orderContainer').appendChild(orderInfoDiv);
-                }
-
-                // Appeler la fonction pour afficher les informations de commande
+                const orderDetails = JSON.parse(e.message);
+                console.log(orderDetails)
                 createOrderInfo(
-                    orderDetails.start,     // Point de départ
-                    orderDetails.end,       // Destination
-                    orderDetails.distance,  // Distance
-                    orderDetails.duration,  // Durée
-                    orderDetails.price      // Prix
+                    orderDetails.start,
+                    orderDetails.end,
+                    orderDetails.distance,
+                    orderDetails.duration,
+                    orderDetails.price,
+                    orderDetails.startCoords,
+                    orderDetails.endCoords
                 );
             });
-    }, 200);
+    }, 100);
 
+    function createOrderInfo(startAddress, endAddress, distance, duration, price, startCoords, endCoords) {
+        const orderInfoDiv = document.createElement('div');
+        orderInfoDiv.className = 'order-info';
 
+        const title = document.createElement('h4');
+        title.innerText = 'Nouvelle Commande';
+        orderInfoDiv.appendChild(title);
 
+        orderInfoDiv.innerHTML += `
+            <p><strong>Point de départ :</strong> ${startAddress}</p>
+            <p><strong>Destination :</strong> ${endAddress}</p>
+            <p><strong>Distance :</strong> ${distance} km</p>
+            <p><strong>Durée :</strong> ${duration} minutes</p>
+            <p><strong>Prix :</strong> ${price} FC</p>
+        `;
 
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = "{{route("save-commande")}}"; // Remplacez par votre route
+        form.innerHTML = `
+            @csrf
+        <input type="hidden" name="start" value="${startAddress}">
+            <input type="hidden" name="end" value="${endAddress}">
+            <input type="hidden" name="distance" value="${distance}">
+            <input type="hidden" name="duration" value="${duration}">
+            <input type="hidden" name="price" value="${price}">
+            <input type="hidden" name="startCoords" value="${startCoords}">
+            <input type="hidden" name="endCoords" value="${endCoords}">
+        `;
+
+        const acceptButton = document.createElement('button');
+        acceptButton.type = 'submit';
+        acceptButton.innerText = 'Accepter la commande';
+        form.appendChild(acceptButton);
+
+        orderInfoDiv.appendChild(form);
+        document.getElementById('orderContainer').appendChild(orderInfoDiv);
+    }
 </script>
 
 </body>

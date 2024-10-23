@@ -39,12 +39,15 @@ Route::get('/accepter',[\App\Http\Controllers\ChauffeurController::class, 'accep
 
 Route::post('/order/submit', [\App\Http\Controllers\CommandeController::class, 'submit'])->name('order.submit');
 
+Route::post('/save-commande',[\App\Http\Controllers\CommandeController::class, 'saveCommande'])->name('save-commande');
 // Testing
 Route::get('/commande', function () {
     return view('layouts.CommandePassee');
 });
 
+Route::get('/commande-encours/{id}', [\App\Http\Controllers\CommandeController::class, 'commande_encours'])->name('commande-encours');
+
 Route::get('/test', function (){
-    event(new \App\Events\testingEvent());
+    event(new \App\Events\CommandAcceptEvent());
     return 'done';
 });
