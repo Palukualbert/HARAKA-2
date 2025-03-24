@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Leaflet avec Recherche d'Adresse</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map {
+            height: 500px;
+            width: 100%;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+        input, button {
+            padding: 10px;
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Rechercher une Adresse</h2>
+<input type="text" id="start" placeholder="Entrez une adresse..." size="40">
+<button id="routeButton">Afficher sur la carte</button>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+    // Initialisation de la carte
+    let map = L.map('map').setView([48.8566, 2.3522], 13); // Coordonnées par défaut (Paris)
+
+    // Ajouter la couche OpenStreetMap
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    let startMarker; // Variable pour stocker le marqueur du point de départ
+
+    // Fonction pour récupérer les coordonnées depuis une adresse
+    function getCoordinates(address, callback) {
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address)}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.length > 0) {
+                    callback(data[0].lat, data[0].lon);
+                } else {
+                    alert("Adresse introuvable !");
+                }
+            })
+            .catch(error => console.error("Erreur de géocodage :", error));
+    }
+
+    // Fonction pour ajouter un marqueur sur la carte
+    function addStartMarker(lat, lon) {
+        if (startMarker) {
+            map.removeLayer(startMarker); // Supprime le précédent marqueur
+        }
+        startMarker = L.marker([lat, lon]).addTo(map)
+            .bindPopup("Point de départ")
+            .openPopup();
+
+        map.setView([lat, lon], 13); // Centre la carte sur le marqueur
+    }
+
+    // Écouteur d'événement sur le bouton
+    document.getElementById('routeButton').addEventListener('click', function() {
+        let startAddress = document.getElementById('start').value;
+
+        if (startAddress.trim() === "") {
+            alert("Veuillez entrer une adresse !");
+            return;
+        }
+
+        getCoordinates(startAddress, (lat, lon) => {
+            console.log(`Coordonnées du point de départ : ${lat}, ${lon}`);
+            addStartMarker(lat, lon);
+        });
+    });
+</script>
+
+</body>
+</html>

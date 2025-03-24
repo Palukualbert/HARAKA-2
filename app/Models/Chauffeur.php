@@ -24,4 +24,9 @@ class Chauffeur extends Authenticatable
     {
         return $this->hasMany(Vehicule::class);
     }
+    public function commandes()
+    {
+        return $this->hasManyThrough(Commande::class, Vehicule::class);
+    }
+
 }

@@ -75,14 +75,26 @@ class CommandeController extends Controller
 
         event(new CommandAcceptEvent(json_encode($commande->id)));
 
-        return to_route('commande-encours', $commande->id);
+        return to_route('commande-encours-chauffeur', $commande->id);
     }
 
     public function commande_encours($id)
     {
-        $commande = Commande::find($id);
+        // Charger la commande avec le véhicule et le chauffeur via la relation hasOneThrough
+        $commande = Commande::with('vehicule.chauffeur')->find($id);
+
+        // Vérification que la commande et le chauffeur existent
+        if (!$commande || !$commande->vehicule || !$commande->vehicule->chauffeur) {
+            return redirect()->back()->with('error', 'Commande, véhicule ou chauffeur introuvable.');
+        }
 
         return view('layouts.commandeEncours', compact('commande'));
+    }
+    public function commande_encours_chauffeur($id)
+    {
+        $commande = Commande::find($id);
+
+        return view('layouts.CommandeEncoursChauffeur', compact('commande'));
     }
 
 }

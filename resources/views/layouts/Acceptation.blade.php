@@ -111,8 +111,21 @@
     </style>
 </head>
 <body>
-@include('partials.header')
-
+<header id="header">
+    <div class="header-top">
+    </div>
+    <div class="container main-menu">
+        <div class="row align-items-center justify-content-between d-flex">
+            <a href="/"><img src="img/haraka.png" style="height: 70px; width: 110px; max-width: 100%;" alt="" title="" /></a>
+            <nav id="nav-menu-container">
+                <ul class="nav-menu">
+                    <li><a href="/accepter">Acceptation</a></li>
+                    <li><a href="#">Commande en cours</a></li>
+                </ul>
+            </nav><!-- #nav-menu-container -->
+        </div>
+    </div>
+</header>
 <section style="margin: 40px auto; width: 90%; max-width: 1200px;">
     <div id="map"></div>
     <div id="orderContainer"></div>

@@ -132,8 +132,7 @@
     <div class="header-top"></div>
     <div class="container main-menu">
         <div class="row align-items-center justify-content-between d-flex">
-            <!--<a href="index.html"><img src="img/logo.png" alt="" title="" /></a>-->
-            <h3 style="color: white;font-family:'Arial Narrow'">HARAKA <span style="color : yellow">.</span></h3>
+            <a href="/"><img src="img/haraka.png" style="height: 60px; width: 110px; max-width: 100%;" alt="" title="" /></a>
             <nav id="nav-menu-container">
                 <ul class="nav-menu">
                     <li><a href="#">Ajouter Chauffeur</a></li>
@@ -217,7 +216,7 @@
     <div class="container text-center">
         <p class="footer-text">
             <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-            Copyright &copy;<script>document.write(new Date().getFullYear());</script> Tous Droits reservés | <i class="fa fa-html5" aria-hidden="true"></i> by <span> haraka</span>
+            Copyright &copy;<script>document.write(new Date().getFullYear());</script> Tous Droits reservés | <i class="fa fa-html5" aria-hidden="true"></i> par <span> haraka</span>
         </p>
     </div>
 </footer>

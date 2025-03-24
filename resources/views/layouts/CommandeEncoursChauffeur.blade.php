@@ -11,7 +11,6 @@
           crossorigin=""/>
     <!-- Leaflet Routing Machine CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.css" />
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
     <link rel="stylesheet" href="{{asset('css/linearicons.css')}}">
     <link rel="stylesheet" href="{{asset('css/font-awesome.min.css')}}">
@@ -30,62 +29,70 @@
         }
 
         /* Style de la page */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e1e;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+        }
+
         h1 {
             text-align: center;
             color: #FFD700;
+            margin-top: 20px;
         }
+
         .container {
             max-width: 600px;
             margin: auto;
         }
+
         .card {
-            border: none;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             background-color: #333;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
+
         .card-header {
             background-color: #FFD700;
             color: black;
             text-align: center;
+            padding: 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
         }
+
         .card-body {
-            color: #FFF;
+            padding: 20px;
         }
+
+        .card-body p {
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
         .card-footer {
             background-color: #222;
+            padding: 10px;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
             text-align: right;
         }
+
         .btn-secondary {
             background-color: #FFD700;
             color: black;
-            border: none;
-        }
-        .styled-select {
-            background: linear-gradient(to right, #FFD700, #000); /* Dégradé jaune -> noir */
-            color: white; /* Texte en blanc */
-            padding: 10px;
+            padding: 10px 20px;
             border: none;
             border-radius: 5px;
-            font-size: 16px;
             cursor: pointer;
-            appearance: none; /* Supprime l'apparence par défaut */
-            -webkit-appearance: none; /* Pour Safari */
-            -moz-appearance: none; /* Pour Firefox */
+            font-size: 16px;
+            transition: background-color 0.3s ease;
         }
 
-        .styled-select:focus {
-            outline: none;
-            border: 2px solid #FFD700; /* Bordure jaune au focus */
-        }
-        /* Changer la couleur du texte dans les options */
-        .styled-select option {
-            background: white; /* Fond blanc */
-            color: black; /* Texte en noir */
-        }
-
-        /* Style de la flèche pour certains navigateurs */
-        .styled-select::-ms-expand {
-            display: none;
+        .btn-secondary:hover {
+            background-color: #ffcc00;
         }
     </style>
 </head>
@@ -106,33 +113,12 @@
             <p><strong>Point de départ :</strong> {{ $commande['pointDepart'] }}</p>
             <p><strong>Destination :</strong> {{ $commande['destination'] }}</p>
             <p><strong>Coût Estimé :</strong> {{ number_format($commande['coutEstime'], 2) }} Francs</p>
-
-            <!-- Afficher les informations du chauffeur -->
-            <p><strong>Nom du chauffeur :</strong> {{ $commande->vehicule->chauffeur->nom }}</p>
-            <p><strong>Numéro de téléphone :</strong> {{ $commande->vehicule->chauffeur->telephone }}</p>
-
         </div>
-        <div class="card-footer flex space-between">
+        <div class="card-footer flex space-between ">
             <a href="" class="btn btn-secondary">Annuler la commande</a>
-            <select name="Paiement" id="paiement" class="styled-select" onchange="redirectToPayment()">
-                <option value="" selected disabled>Paiement en ligne</option>
-                <option value="mobile_money">Mobile Money</option>
-                <option value="espece">Espèce</option>
-            </select>
+
+            <a href="" class="btn btn-secondary">Retour</a>
         </div>
-
-        <script>
-            function redirectToPayment() {
-                var paiementSelect = document.getElementById("paiement");
-                var selectedValue = paiementSelect.value;
-
-                if (selectedValue === "mobile_money") {
-                    window.location.href = "/payer"; // Remplace par l'URL de ta page
-                }
-            }
-        </script>
-
-
     </div>
 </div>
 
@@ -144,7 +130,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js"></script>
 
 <script>
-    // Configuration de la carte avec Leaflet.js
+    // Initialiser la carte avec la position de départ
     const map = L.map('map').setView([{{ $commande['latitudeDepart'] }}, {{ $commande['longitudeDepart'] }}], 13);
 
     // Ajouter une couche OpenStreetMap
@@ -153,44 +139,78 @@
         attribution: '© OpenStreetMap'
     }).addTo(map);
 
-    // Définir une icône personnalisée (bonhomme en rouge)
-    const personIcon = L.icon({
-        iconUrl: 'https://cdn-icons-png.flaticon.com/512/847/847969.png', // Modèle original
-        iconSize: [40, 40], // Taille de l'icône
-        iconAnchor: [20, 40], // Position de l'ancre
-        popupAnchor: [0, -40], // Position du popup
-        className: 'custom-icon' // Appliquer un style CSS pour la couleur
+    // Icône personnalisée pour la voiture jaune (chauffeur)
+    const carIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/3202/3202926.png', // Icône voiture jaune 🚕
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40]
     });
 
-    // Ajouter le marqueur du point de départ avec l'icône personnalisée
+    // Icône pour le passager (bonhomme)
+    const personIcon = L.icon({
+        iconUrl: 'https://cdn-icons-png.flaticon.com/512/847/847969.png', // Icône bonhomme
+        iconSize: [40, 40],
+        iconAnchor: [20, 40],
+        popupAnchor: [0, -40]
+    });
+
+    // Ajouter le marqueur du point de départ (passager)
     const startMarker = L.marker([{{ $commande['latitudeDepart'] }}, {{ $commande['longitudeDepart'] }}], { icon: personIcon })
         .addTo(map)
         .bindPopup('🚶 Point de départ: {{ $commande['pointDepart'] }}')
         .openPopup();
 
-    // Ajouter un marqueur standard pour la destination
+    // Ajouter un marqueur pour la destination
     const endMarker = L.marker([{{ $commande['latitudeDest'] }}, {{ $commande['longitudeDest'] }}])
         .addTo(map)
         .bindPopup('📍 Destination: {{ $commande['destination'] }}');
 
-    // Ajout d'un itinéraire entre les deux points
+    // Ajouter un marqueur pour la position actuelle du chauffeur (qui sera mis à jour en temps réel)
+    let chauffeurMarker = L.marker([{{ $commande['latitudeDepart'] }}, {{ $commande['longitudeDepart'] }}], { icon: carIcon })
+        .addTo(map)
+        .bindPopup('🚕 Position du chauffeur');
+
+    // Fonction pour mettre à jour la position du chauffeur en temps réel
+    function updateChauffeurPosition(lat, lng) {
+        chauffeurMarker.setLatLng([lat, lng]); // Mise à jour de la position
+        map.setView([lat, lng], 13); // Centrer la carte sur la position actuelle du chauffeur
+    }
+
+    // Demander l'accès à la position GPS de la machine (chauffeur)
+    if (navigator.geolocation) {
+        navigator.geolocation.watchPosition(
+            function (position) {
+                let lat = position.coords.latitude;
+                let lng = position.coords.longitude;
+                updateChauffeurPosition(lat, lng);
+            },
+            function (error) {
+                console.error("Erreur de géolocalisation : ", error.message);
+                alert("Impossible d'obtenir la position GPS du chauffeur !");
+            },
+            {
+                enableHighAccuracy: true, // Précision maximale
+                timeout: 5000, // Attente max avant erreur
+                maximumAge: 0 // Ne pas utiliser une ancienne position
+            }
+        );
+    } else {
+        alert("La géolocalisation n'est pas supportée par votre navigateur.");
+    }
+
+    // Ajout d'un itinéraire entre le point de départ et la destination
     L.Routing.control({
         waypoints: [
             L.latLng({{ $commande['latitudeDepart'] }}, {{ $commande['longitudeDepart'] }}),
             L.latLng({{ $commande['latitudeDest'] }}, {{ $commande['longitudeDest'] }})
         ],
         routeWhileDragging: false,
-        createMarker: function() { return null; }, // Désactiver les marqueurs par défaut
+        createMarker: function() { return null; } // Désactiver les marqueurs par défaut
     }).addTo(map);
 </script>
-
-<style>
-    /* 🎨 Changer la couleur de l'icône du bonhomme */
-    .custom-icon img {
-        filter: hue-rotate(0deg) saturate(500%) brightness(80%); /* 🔴 Rouge */
-    }
-</style>
 
 
 </body>
 </html>
+

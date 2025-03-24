@@ -204,26 +204,26 @@
     <body>
     @include('partials.header')
 
-    <section style="margin: 80px auto 40px auto; width: 90%;">
-        <div id="controls" class="container mt-4">
+    <section style="margin: 80px auto 40px auto; width: 90%">
+        <div id="controls" class="container mt-4" style="margin-left: 40px">
             <div class="form-group">
                 <label for="start" class="form-label">Point de départ :</label>
-                <input type="text" id="start" class="form-control" placeholder="Nom de l'avenue">
+                <input type="text" id="start" class="form-control" style="width: max-content" placeholder="">
             </div>
             <div class="form-group">
                 <label for="end" class="form-label">Destination :</label>
-                <input type="text" id="end" class="form-control" placeholder="Nom de l'avenue">
+                <input type="text" id="end" class="form-control" style="width: max-content" placeholder="">
             </div>
             <div class="form-group">
                 <label for="category">Catégorie</label>
-                <select class="form-control" id="category" name="nomCategorie">
+                <select class="form-control" id="category" name="nomCategorie" style="width: max-content">
                     <option value="">Choisissez une categorie</option>
                     <option value="1">VIP</option>
                     <option value="2">ORDINAIRE</option>
                 </select>
             </div>
             <div style="display: flex; width: 100%; margin-top: 10px; gap: 20px;">
-                <button id="routeButton" class="btn" style="flex: 1; max-width: 45%; background-color: black; color: white"> Itinéraire</button>
+                <button id="routeButton" class="btn" style="flex: 1; max-width: 60%; background-color: black; color: white; width: max-content"> Itinéraire</button>
             </div>
 
             <form style="display: flex; width: 100%; margin-top: 10px; gap: 20px;" id="orderForm" method="POST" action="{{ route('order.submit') }}">
@@ -235,7 +235,7 @@
                 <input type="hidden" name="distance" id="formDistance">
                 <input type="hidden" name="duration" id="formDuration">
                 <input type="hidden" name="price" id="formPrice">
-                <button id="orderButton" type="submit" class="btn btn-outline-info" style="flex: 1; max-width: 45%; background-color: #FFFF00; color: black">Commander</button>
+                <button id="orderButton" type="submit" class="btn btn-outline-info" style="flex: 1; max-width:60%; background-color: #FFFF00; color: black">Commander</button>
             </form>
         </div>
 
@@ -243,7 +243,6 @@
             <button id="closeRouteDialog" style="background-color: red; color: white; border: none; padding: 5px; cursor: pointer;">X</button>
             <div id="routeDetails"></div>
         </div>
-
 
         <div id="map" style="width: 100%; height: 400px;"></div>
 
@@ -263,7 +262,7 @@
                 attribution: '© OpenStreetMap'
             }).addTo(map);
 
-            const API_KEY = '4948b4ccd6a84509857ce4712d71329a';
+            const API_KEY = '9e87332b13474cc5acfc35b018900565';
 
             function geocodeAddress(address, callback) {
                 fetch(`https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(address)}, Lubumbashi&key=${API_KEY}&language=fr`)
@@ -273,7 +272,7 @@
                             const { lat, lng } = data.results[0].geometry;
                             callback([parseFloat(lat), parseFloat(lng)]);
                         } else {
-                            alert("Adresse non trouvée : " + address);
+                            alert("Adresse non trouvée !" );
                         }
                     })
                     .catch(err => {

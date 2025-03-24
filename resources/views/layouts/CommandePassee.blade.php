@@ -78,7 +78,6 @@
     </style>
 </head>
 <body>
-@include('partials.header')
 <div class="loader" id='loader'></div>
 <div class="loading-text" id="loading-text" >Recherche de taxis en cours...</div>
 <div class="no-driver-message" id="no-driver-message">Aucun chauffeur trouvé.</div>

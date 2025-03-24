@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('layouts.accueil');
@@ -18,7 +19,8 @@ Route::delete('/chauffeur/{id}/delete', [App\Http\Controllers\ChauffeurControlle
 
 Route::get('/chauffeur/{id}/rapport/pdf', [\App\Http\Controllers\ChauffeurController::class, 'generatePdf'])->name('chauffeur.rapport.pdf');
 Route::get('/liste', [\App\Http\Controllers\ChauffeurController::class,'liste'])->name('chauffeur.liste');
-
+Route::get('/commandes', [CommandeController::class, 'index'])->name('commande.liste');
+Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 Route::get('/payer',[\App\Http\Controllers\PaiementController::class, 'paiement'])->name('client.payer');
 Route::post('/payment', [\App\Http\Controllers\PaiementController::class, 'Payment'])->name('payment');
 Route::match(['get','post'],'/notify_url', [\App\Http\Controllers\PaiementController::class, 'notify_url'])->name('notify_url');
@@ -46,6 +48,7 @@ Route::get('/commande', function () {
 });
 
 Route::get('/commande-encours/{id}', [\App\Http\Controllers\CommandeController::class, 'commande_encours'])->name('commande-encours');
+Route::get('/commande-encours-chauffeur/{id}', [\App\Http\Controllers\CommandeController::class, 'commande_encours_chauffeur'])->name('commande-encours-chauffeur');
 
 Route::get('/test', function (){
     event(new \App\Events\CommandAcceptEvent());
