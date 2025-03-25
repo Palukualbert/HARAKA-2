@@ -6,6 +6,8 @@ use App\Models\Commande;
 use Illuminate\Http\Request;
 use App\Events\CommandeEvent;
 use App\Events\CommandAcceptEvent;
+use App\Models\Vehicule;
+use Illuminate\Support\Facades\Auth;
 
 class CommandeController extends Controller
 {
@@ -53,7 +55,9 @@ class CommandeController extends Controller
 
     public function saveCommande(Request $request)
     {
-
+        $chauff_id = Auth::user()->id;
+        $id_vehicule = Vehicule::where("chauffeur_id", $chauff_id)->get();
+    
         list($latitudeDepartStart, $longitudeDepartStart) = explode(',', $request->startCoords);
         list($latitudeDestEnd, $longitudeDestEnd) = explode(',', $request->endCoords);
 
@@ -68,7 +72,7 @@ class CommandeController extends Controller
             'longitudeDest' => $longitudeDestEnd,
             'latitudeDest' => $latitudeDestEnd,
             'client_id' => 1,
-            'vehicule_id' => 1,
+            'vehicule_id' => $id_vehicule[0]->id,
         ];
 
         $commande = Commande::create($data);
