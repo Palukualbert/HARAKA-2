@@ -57,5 +57,5 @@ Route::get('/test', function (){
 
 
 Route::get('/env',function (){
-   dd(env('DB_DATABASE'));
+   dd(env('APIKEY'));
 });

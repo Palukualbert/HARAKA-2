@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Controllers\CommandeController;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -18,5 +19,9 @@ class Vehicule extends Model
     public function chauffeur()
     {
         return $this->belongsTo(Chauffeur::class, 'chauffeur_id');
+    }
+
+    public function commandes(){
+        return $this->hasMany(Commande::class, 'vehicule_id');
     }
 }

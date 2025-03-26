@@ -89,12 +89,14 @@
 
         @php
             $commandesDuJour = [];
+
             // Parcours des véhicules, en s'assurant de toujours avoir une collection (ou tableau)
             foreach(($chauffeur->vehicules ?? []) as $vehicule) {
                 // Parcours des commandes de chaque véhicule
                 foreach(($vehicule->commandes ?? []) as $commande) {
                     if($commande->date === now()->format('Y-m-d')) {
                         $commandesDuJour[] = $commande;
+
                     }
                 }
             }
