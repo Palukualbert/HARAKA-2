@@ -15,6 +15,7 @@ class PaiementController extends Controller
     //CINETPAY
     public function Payment(Request $request)
     {
+
         $transaction_id = date("YmdHis");// Generer votre identifiant de transaction
         $cinetpay_data =  [
             "amount" => $request['amount'],
@@ -54,12 +55,14 @@ class PaiementController extends Controller
                 "content-type:application/json"
             ),
         ));
+
         $response = curl_exec($curl);
         $err = curl_error($curl);
         curl_close($curl);
 
         //On recupère la réponse de CinetPay
         $response_body = json_decode($response,true);
+
         if($response_body['code'] == '201')
         {
             $payment_link = $response_body["data"]["payment_url"]; // Recuperation de l'url de paiement
@@ -68,7 +71,7 @@ class PaiementController extends Controller
             //Ensuite redirection vers la page de paiement
             return redirect($payment_link);
         }
-    else
+        else
         {
             return back()->with('info', 'Une erreur est survenue.  Description : '. $response_body["description"]);
         }

@@ -1,161 +1,124 @@
 <!DOCTYPE html>
-<html lang="zxx" class="no-js">
+<html lang="fr">
 <head>
-    <!-- Mobile Specific Meta -->
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <!-- Favicon -->
-    <link rel="shortcut icon" href="img/fav.png">
-    <!-- Meta Description -->
-    <meta name="description" content="">
-    <!-- Meta Keyword -->
-    <meta name="keywords" content="">
-    <!-- meta character set -->
     <meta charset="UTF-8">
-    <!-- Site Title -->
     <title>Taxi - Chauffeur</title>
 
-    <!-- Font and CSS Includes -->
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css?family=Poppins:100,200,400,300,500,600,700" rel="stylesheet">
-    <link rel="stylesheet" href="{{asset('css/linearicons.css')}}">
-    <link rel="stylesheet" href="{{asset('css/font-awesome.min.css')}}">
-    <link rel="stylesheet" href="{{asset('css/bootstrap.css')}}">
-    <link rel="stylesheet" href="{{asset('css/magnific-popup.css')}}">
-    <link rel="stylesheet" href="{{asset('css/nice-select.css')}}">
-    <link rel="stylesheet" href="{{asset('css/animate.min.css')}}">
-    <link rel="stylesheet" href="{{asset('css/jquery-ui.css')}}">
-    <link rel="stylesheet" href="{{asset('css/main.css')}}">
+
+    <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.css" />
 
     <style>
-        /* General Styles */
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f8f9fa;
-            padding-top: 70px;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
         }
 
-        header {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            z-index: 1000;
-            background-color: white;
-            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+        /* Conteneur principal */
+        .container-fluid {
+            flex: 1;
         }
 
+        /* Carte */
         #map {
             height: 400px;
-            margin-bottom: 20px;
-        }
-
-        .container {
-            max-width: 100%;
-        }
-
-        .order-info {
-            background-color: #ffffff;
-            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
         }
 
-        .order-info h4 {
-            margin-bottom: 15px;
-            font-weight: 600;
-            font-size: 20px;
-        }
-
-        .order-info p {
-            margin-bottom: 10px;
-            font-size: 16px;
-        }
-
-        .order-info button {
+        /* Conteneur des commandes centré */
+        #orderContainer {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Centre les cartes horizontalement */
             width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            transition: background-color 0.3s;
+            margin-top: 20px; /* Ajuster la hauteur */
         }
 
-        .order-info button:hover {
-            background-color: #0056b3;
+        /* Cartes de commande plus grandes */
+        .order-card {
+            width: 100%;
+            max-width: 700px; /* Largeur augmentée */
+            min-height: 230px; /* Hauteur augmentée */
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+            padding: 20px; /* Plus d'espace intérieur */
+            font-size: 16px; /* Texte plus grand */
         }
 
-        /* Responsive Styles */
-        @media (max-width: 768px) {
-            #map {
-                height: 300px;
-            }
+        /* Centrer les commandes sur grand écran */
+        .commandes-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        @media (max-width: 576px) {
-            .order-info h4 {
-                font-size: 18px;
-            }
-
-            .order-info p {
-                font-size: 14px;
-            }
-
-            .order-info button {
-                font-size: 14px;
+        /* Ajustement responsive */
+        @media (max-width: 992px) { /* Tablettes et mobiles */
+            .order-card {
+                max-width: 95%; /* Prend presque toute la largeur */
+                min-height: auto; /* Hauteur flexible */
+                padding: 15px;
             }
         }
     </style>
 </head>
 <body>
-<header id="header">
-    <div class="header-top">
-    </div>
-    <div class="container main-menu">
-        <div class="row align-items-center justify-content-between d-flex">
-            <a href="/"><img src="img/haraka.png" style="height: 70px; width: 110px; max-width: 100%;" alt="" title="" /></a>
-            <nav id="nav-menu-container">
-                <ul class="nav-menu">
-                    <li><a href="/accepter">Acceptation</a></li>
-                    <li><a href="#">Commande en cours</a></li>
-                </ul>
-            </nav><!-- #nav-menu-container -->
+
+<!-- Navbar Bootstrap -->
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">
+            <img src="img/haraka.png" alt="Logo" height="50">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="/accepter">Acceptation</a></li>
+                <li class="nav-item"><a class="nav-link" href="#">Commande en cours</a></li>
+            </ul>
         </div>
     </div>
-</header>
-<section style="margin: 40px auto; width: 90%; max-width: 1200px;">
-    <div id="map"></div>
-    <div id="orderContainer"></div>
-</section>
+</nav>
+
+<!-- Contenu principal -->
+<div class="container-fluid mt-5 pt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 commandes-container">
+            <h3 class="mb-3 text-primary text-center">Commandes reçues</h3>
+            <div id="orderContainer"></div>
+        </div>
+    </div>
+    <div class="row justify-content-center text-center">
+        <div class="col-lg-8">
+            <div id="map" class="bg-light w-100"></div>
+        </div>
+    </div>
+</div>
 
 @vite('resources/js/app.js')
 @include('partials.footer')
 
-<script src="{{ asset('js/vendor/jquery-2.2.4.min.js') }}"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" crossorigin="anonymous"></script>
-<script src="{{ asset('js/vendor/bootstrap.min.js') }}"></script>
-<script src="{{ asset('js/easing.min.js') }}"></script>
-<script src="{{ asset('js/hoverIntent.js') }}"></script>
-<script src="{{ asset('js/superfish.min.js') }}"></script>
-<script src="{{ asset('js/jquery.ajaxchimp.min.js') }}"></script>
-<script src="{{ asset('js/jquery.magnific-popup.min.js') }}"></script>
-<script src="{{ asset('js/jquery-ui.js') }}"></script>
-<script src="{{ asset('js/jquery.nice-select.min.js') }}"></script>
-<script src="{{ asset('js/mail-script.js') }}"></script>
-<script src="{{ asset('js/main.js') }}"></script>
-
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet-routing-machine/3.2.12/leaflet-routing-machine.min.js"></script>
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script>
     setTimeout(() => {
         window.Echo.channel('commandeChannel')
             .listen('CommandeEvent', (e) => {
                 const orderDetails = JSON.parse(e.message);
-                console.log(orderDetails)
                 createOrderInfo(
                     orderDetails.start,
                     orderDetails.end,
@@ -169,42 +132,43 @@
     }, 100);
 
     function createOrderInfo(startAddress, endAddress, distance, duration, price, startCoords, endCoords) {
-        const orderInfoDiv = document.createElement('div');
-        orderInfoDiv.className = 'order-info';
+        const orderContainer = document.getElementById('orderContainer');
 
-        const title = document.createElement('h4');
-        title.innerText = 'Nouvelle Commande';
-        orderInfoDiv.appendChild(title);
+        // Création de la carte de commande Bootstrap
+        const orderCard = document.createElement('div');
+        orderCard.className = 'order-card card shadow-sm p-3 text-center';
 
-        orderInfoDiv.innerHTML += `
-            <p><strong>Point de départ :</strong> ${startAddress}</p>
-            <p><strong>Destination :</strong> ${endAddress}</p>
-            <p><strong>Distance :</strong> ${distance} km</p>
-            <p><strong>Durée :</strong> ${duration} minutes</p>
-            <p><strong>Prix :</strong> ${price} FC</p>
-        `;
-
-        const form = document.createElement('form');
-        form.method = 'POST';
-        form.action = "{{route("save-commande")}}"; // Remplacez par votre route
-        form.innerHTML = `
-            @csrf
+        orderCard.innerHTML = `
+            <h5 class="card-title text-primary">Nouvelle Commande</h5>
+            <p class="mb-1"><strong>Départ :</strong> ${startAddress}</p>
+            <p class="mb-1"><strong>Destination :</strong> ${endAddress}</p>
+            <p class="mb-1"><strong>Distance :</strong> ${distance} km</p>
+            <p class="mb-1"><strong>Durée :</strong> ${duration} minutes</p>
+            <p class="mb-3"><strong>Prix :</strong> ${price} FC</p>
+            <form method="POST" action="{{route('save-commande')}}">
+                @csrf
         <input type="hidden" name="start" value="${startAddress}">
-            <input type="hidden" name="end" value="${endAddress}">
-            <input type="hidden" name="distance" value="${distance}">
-            <input type="hidden" name="duration" value="${duration}">
-            <input type="hidden" name="price" value="${price}">
-            <input type="hidden" name="startCoords" value="${startCoords}">
-            <input type="hidden" name="endCoords" value="${endCoords}">
+                <input type="hidden" name="end" value="${endAddress}">
+                <input type="hidden" name="distance" value="${distance}">
+                <input type="hidden" name="duration" value="${duration}">
+                <input type="hidden" name="price" value="${price}">
+                <input type="hidden" name="startCoords" value="${startCoords}">
+                <input type="hidden" name="endCoords" value="${endCoords}">
+                <button type="submit" class="btn btn-primary w-100">Accepter la commande</button>
+            </form>
         `;
 
-        const acceptButton = document.createElement('button');
-        acceptButton.type = 'submit';
-        acceptButton.innerText = 'Accepter la commande';
-        form.appendChild(acceptButton);
+        // Ajouter la commande en haut
+        orderContainer.prepend(orderCard);
 
-        orderInfoDiv.appendChild(form);
-        document.getElementById('orderContainer').appendChild(orderInfoDiv);
+        // Forcer le scroll vers la commande
+        orderCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        // Animation d'apparition
+        setTimeout(() => {
+            orderCard.style.opacity = 1;
+            orderCard.style.transform = 'translateY(0)';
+        }, 100);
     }
 </script>
 

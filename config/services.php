@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'cinetpay' => [
+        'apikey' => env('APIKEY'),
+        'site_id' => env('SITE_ID'),
+    ],
+
 ];

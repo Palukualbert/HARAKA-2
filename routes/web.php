@@ -54,3 +54,8 @@ Route::get('/test', function (){
     event(new \App\Events\CommandAcceptEvent());
     return 'done';
 });
+
+
+Route::get('/env',function (){
+   dd(env('DB_DATABASE'));
+});
